@@ -1,6 +1,7 @@
 @extends('admin.layouts.app')
 @section('title', 'Order | KRL')
 @section('content')
+{{-- @dd($orders); --}}
 <div class="page-content">
    <div class="container-fluid">
       <!-- start page title -->
@@ -17,7 +18,7 @@
             </div>
          </div>
       </div>
-      <!-- end page title -->
+    
       <!-- Order Booking listing Page -->
       <div class="row listing-form">
          <div class="col-12">
@@ -99,25 +100,25 @@
                            @endphp
                            <td>{{ $fromDestination->destination ?? '-' }}</td>
                            <td>{{ $toDestination->destination ?? '-' }}</td>
-
-                           
                            @if (hasAdminPermission('edit lr_consignment') || hasAdminPermission('delete lr_consignment')|| hasAdminPermission('view lr_consignment'))
                            <td>
+                               {{-- <span>{{ $order->order_id }} - {{ $lr['lr_number'] }}</span> --}}
                               @if (hasAdminPermission('view lr_consignment'))
-                              <a href="{{ route('admin.consignments.documents', $lr['lr_number']) }}" class="btn btn-sm btn-light" data-bs-toggle="tooltip" title="View Documents"><i class="fas fa-file-alt text-primary"></i></a>
+                              <a href="{{ route('admin.consignments.documents', [$order->order_id, $lr['lr_number']]) }}" class="btn btn-sm btn-light"><i class="fas fa-file-alt text-primary"></i></a>
                               @endif
                               @if (hasAdminPermission('view lr_consignment'))
-                              <a href="{{ route('admin.consignments.view', $lr['lr_number']) }}" class="btn btn-sm btn-light" data-bs-toggle="tooltip" title="View Details"><i class="fas fa-eye text-primary"></i></a>
+                              <a href="{{ route('admin.consignments.view', [$order->order_id, $lr['lr_number']]) }}" class="btn btn-sm btn-light"><i class="fas fa-eye text-primary"></i></a>
                               @endif
                               @if (hasAdminPermission('edit lr_consignment'))
-                              <a href="{{ route('admin.consignments.edit', $order->order_id) }}" class="btn btn-sm btn-light" data-bs-toggle="tooltip" title="Edit Consignment"><i class="fas fa-pen text-warning"></i></a>
+                             <a href="{{ route('admin.consignments.edit', [$order->order_id, $lr['lr_number']]) }}" class="btn btn-sm btn-light">
+                                 <i class="fas fa-pen text-warning"></i>
+                              </a>
                               @endif
                               @if (hasAdminPermission('delete lr_consignment'))
-                              <a href="{{ route('admin.consignments.delete', $order->order_id) }}" class="btn btn-sm btn-light" data-bs-toggle="tooltip" title="Delete Consignment"><i class="fas fa-trash text-danger"></i></a>
+                              <a href="{{ route('admin.consignments.delete', [$order->order_id, $lr['lr_number']]) }}" class="btn btn-sm btn-light"><i class="fas fa-trash text-danger"></i></a>
                               @endif
                            </td>
                            @endif
-
                         </tr>
                         @endforeach
                         @endif

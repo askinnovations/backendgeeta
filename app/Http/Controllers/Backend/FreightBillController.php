@@ -32,41 +32,40 @@ class FreightBillController extends Controller implements HasMiddleware
 
 public function index()
 {
-   $bills = FreightBill::with('order')->get()
+   
+   
+    $bills = FreightBill::with('order')->get()
                ->groupBy('freight_bill_number');
-            //    dd($bills);
-
     return view('admin.freight-bill.index', compact('bills'));
 }
-
-
 
 
 public function destroy($id)
 {
     try {
-        $freightBill = FreightBill::findOrFail($id);
-        $freightBill->delete();
+        $tyre = FreightBill::findOrFail($id);
 
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Freight bill deleted successfully.'
-        ]);
+        if ($tyre->delete()) {
+            return redirect()->route('admin.freight-bill.index')
+                ->with('success', 'Freight-bill deleted successfully!');
+        }
+
+        return redirect()->route('admin.freight-bill.index')
+            ->with('error', 'Failed to delete the freight-bill.');
+            
     } catch (\Exception $e) {
-        return response()->json([
-            'status' => 'error',
-            'message' => 'Error while deleting the entry.'
-        ], 500);
+        return redirect()->route('admin.freight-bill.index')
+            ->with('error', 'Something went wrong: ' . $e->getMessage());
     }
 }
 
-
-
-
- public function store(Request $request)
-{
+    
     
 
+    
+
+  public function store(Request $request)
+{
     $selectedLrs = json_decode($request->input('selected_lrs'), true);
 
     if (!$selectedLrs || !is_array($selectedLrs)) {
@@ -82,6 +81,7 @@ public function destroy($id)
         $order = Order::where('order_id', $item['order_id'])->first();
         if (!$order) continue;
 
+        // Decode LR JSON if not already an array
         $lrArray = is_array($order->lr) ? $order->lr : json_decode($order->lr, true);
 
         $matchedLr = collect($lrArray)->firstWhere('lr_number', $item['lr_number']);
@@ -92,63 +92,77 @@ public function destroy($id)
         }
     }
 
+    // Remove duplicates
     $orderIds = array_values(array_unique($orderIds));
     $lrNumbers = array_values(array_unique($lrNumbers));
 
-    // अब JSON encode कर के स्टोर करें ताकि DB में string हो, array नहीं
+    // Create Freight Bill and store arrays as JSON (Laravel handles this via $casts)
     $freightBill = FreightBill::create([
-        'order_id' => json_encode($orderIds),     // encode to string
+        'order_id' => $orderIds,
         'freight_bill_number' => $freightBillNumber,
-        'lr_number' => json_encode($lrNumbers),   // encode to string
+        'lr_number' => $lrNumbers,
         'notes' => null,
     ]);
+     dd($freightBill);
 
+    
     return redirect()->route('admin.freight-bill.view', $freightBill->id)
         ->with('success', 'Freight bill generated successfully.');
 }
 
 
 
-
     
 
 
-    public function show(Request $request, $id)
+    public function show($id)
     {
-        $anchor = FreightBill::findOrFail($id);
-
-        $orderIds = json_decode($anchor->order_id, true);
-        $lrNumbers = json_decode($anchor->lr_number, true);
-
+        // 1) fetch the “anchor” FreightBill
+        $anchor = FreightBill::with('order')->findOrFail($id);
+    
+        // 2) grab its bill-number, then all entries with that same bill-number
+        $allEntries = FreightBill::where('freight_bill_number', $anchor->freight_bill_number)
+                                 ->get();
+    
         $matchedEntries = [];
+    
+        foreach ($allEntries as $entry) {
+            // 3) for each FreightBill row, load the original Order
+            $order = Order::where('order_id', $entry->order_id)->first();
 
-        foreach ($orderIds as $orderId) {
-            $order = Order::where('order_id', $orderId)->first();
-            if (!$order) continue;
-
-            $lrs = is_array($order->lr) ? $order->lr : json_decode($order->lr, true);
-
+            if (! $order) continue;
+    
+            // 4) decode that order’s JSON “lr” field
+            $lrs = is_array($order->lr)
+                   ? $order->lr
+                   : json_decode($order->lr, true);
+    
+            // 5) find the one sub-array whose lr_number matches this entry
             foreach ($lrs as $lrDetail) {
-                if (in_array($lrDetail['lr_number'], $lrNumbers)) {
-                    $lrDetail['from_destination'] = Destination::find($lrDetail['from_location'])->destination ?? '-';
-                    $lrDetail['to_destination']   = Destination::find($lrDetail['to_location'])->destination ?? '-';
-                    $lrDetail['freight_type']     = $order->order_method ?? '-';
+                if (($lrDetail['lr_number'] ?? null) === $entry->lr_number) {
+                    
+                $lrDetail['destination'] = Destination::find($lrDetail['from_location'])->destination ?? '-';
+                $lrDetail['destination'] = Destination::find($lrDetail['to_location'])->destination ?? '-';
+                
+             
+                $lrDetail['freight_type'] = $order->order_method ?? '-';
 
                     $matchedEntries[] = $lrDetail;
+                    break;
                 }
             }
         }
-        // Pick the first order from loop for header display (or use anchor->order)
-        $firstOrder = Order::where('order_id', $orderIds[0] ?? null)->first();
-
-
+    
+        // 6) get the order once from anchor
+        $order = $anchor->order;
+    
+        // 7) pass everything to view
         return view('admin.freight-bill.view', [
             'freightBill'    => $anchor,
             'matchedEntries' => $matchedEntries,
-            'order'          => $firstOrder,
+            'order'          => $order, 
         ]);
     }
-
     
     public function editByNumber($freight_bill_number)
     {

@@ -30,16 +30,13 @@
 <div class="row add-form">
 <div class="col-12">
 <div class="card">
-  
-   <form method="POST" action="{{ route('admin.consignments.update', $order->order_id) }}" enctype="multipart/form-data">
+  {{-- @dd($lrData); --}}
+
+   <form method="POST" action="{{ route('admin.consignments.update', [$order->order_id, $lrData['lr_number']]) }}" enctype="multipart/form-data">
       @csrf
+      <input  type="hidden"name="lr_number" value="{{ $lrData['lr_number'] }}" readonly>
       <div class="card-body">
-         @php
-         $lrList = is_array($order->lr) ? $order->lr : json_decode($order->lr, true);
-         $lrData = $lrList[0] ?? []; 
-         
-         @endphp
-         
+       
          <div class="row">
             <!-- Consignor Details -->
             <div class="col-md-6">

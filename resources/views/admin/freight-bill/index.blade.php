@@ -27,6 +27,7 @@
                      <h4 class="card-title">📑 Freight Bill</h4>
                      <p class="card-title-desc">View, edit, or delete freight bill details below.</p>
                   </div>
+                  
                </div>
                <div class="card-body">
                   <table id="datatable" class="table table-bordered dt-responsive nowrap w-100">
@@ -34,7 +35,7 @@
                         <tr>
                            <th>S.No</th>
                            <th>Freight Bill</th>
-                           <th>LR No</th>
+                           <th>LR Nos</th>
                            <th>Consignors</th>
                            <th>Consignees</th>
                            <th>Dates</th>
@@ -46,193 +47,115 @@
                         </tr>
                      </thead>
                      <tbody>
-                        @if(!empty($bills))
                         @foreach($bills as $billNumber => $entries)
                         <tr>
                            <td>{{ $loop->iteration }}</td>
                            <td>{{ $billNumber }}</td>
+                           <!-- All LR numbers under this bill -->
                            <td>
                               @foreach($entries as $e)
-                              @php
-                              // Agar lr_number JSON string hai to decode kar do
-                              $lrNumbers = is_string($e->lr_number) ? json_decode($e->lr_number, true) : $e->lr_number;
-                              @endphp
-                              @if(is_array($lrNumbers))
-                              @foreach($lrNumbers as $lr)
-                              {{ $lr }}<br>
-                              @endforeach
-                              @else
-                              {{ $lrNumbers }}<br>
-                              @endif
+                              {{ $e->lr_number }}<br>
                               @endforeach
                            </td>
                            {{-- Consignors --}}
                            <td>
+                              @foreach($entries as $e)
                               @php
-                              $consignors = collect();
-                              foreach ($entries as $e) {
-                              $orderIds = json_decode($e->order_id, true);
-                              if (is_array($orderIds)) {
-                              foreach ($orderIds as $orderId) {
-                              $order = \App\Models\Order::where('order_id', $orderId)->first();
-                              if ($order) {
-                              $lrs = is_array($order->lr) ? $order->lr : json_decode($order->lr, true);
-                              foreach ($lrs as $lr) {
-                              if (!empty($lr['consignor_id'])) {
-                              $user = \App\Models\User::find($lr['consignor_id']);
-                              if ($user && !$consignors->contains('id', $user->id)) {
-                              $consignors->push($user);
-                              }
-                              }
-                              }
-                              }
-                              }
-                              }
-                              }
+                              // decode the original order->lr JSON
+                              $lrArray   = is_array($e->order->lr)
+                              ? $e->order->lr
+                              : json_decode($e->order->lr, true);
+                              // find the one matching this freight_bill row’s lr_number
+                              $detail    = collect($lrArray)
+                              ->firstWhere('lr_number', $e->lr_number);
+                              // now load that consignor user
+                              $consignor = \App\Models\User::find($detail['consignor_id'] ?? null);
                               @endphp
-                              @foreach($consignors as $consignor)
-                              {{ $consignor->name }}<br>
+                              {{ $consignor->name ?? '-' }}<br>
                               @endforeach
                            </td>
                            {{-- Consignees --}}
                            <td>
+                              @foreach($entries as $e)
                               @php
-                              $consignees = collect();
-                              foreach ($entries as $e) {
-                              $orderIds = json_decode($e->order_id, true);
-                              if (is_array($orderIds)) {
-                              foreach ($orderIds as $orderId) {
-                              $order = \App\Models\Order::where('order_id', $orderId)->first();
-                              if ($order) {
-                              $lrs = is_array($order->lr) ? $order->lr : json_decode($order->lr, true);
-                              foreach ($lrs as $lr) {
-                              if (!empty($lr['consignee_id'])) {
-                              $user = \App\Models\User::find($lr['consignee_id']);
-                              if ($user && !$consignees->contains('id', $user->id)) {
-                              $consignees->push($user);
-                              }
-                              }
-                              }
-                              }
-                              }
-                              }
-                              }
+                              // same detail as above
+                              $detail     = collect(
+                              is_array($e->order->lr)
+                              ? $e->order->lr
+                              : json_decode($e->order->lr, true)
+                              )
+                              ->firstWhere('lr_number', $e->lr_number);
+                              $consignee = \App\Models\User::find($detail['consignee_id'] ?? null);
                               @endphp
-                              @foreach($consignees as $consignee)
-                              {{ $consignee->name }}<br>
+                              {{ $consignee->name ?? '-' }}<br>
                               @endforeach
                            </td>
-                           <!-- LR Dates -->
+                           <!-- **LR Dates** -->
                            <td>
                               @foreach($entries as $e)
-                                 @php
-                                       $lrNumbers = is_string($e->lr_number) ? json_decode($e->lr_number, true) : $e->lr_number;
-                                       $lrDates = [];
-
-                                       if (is_array($lrNumbers)) {
-                                          $orderIds = json_decode($e->order_id, true);
-                                          if (is_array($orderIds)) {
-                                             foreach ($orderIds as $orderId) {
-                                                   $order = \App\Models\Order::where('order_id', $orderId)->first();
-                                                   if ($order) {
-                                                      $lrs = is_array($order->lr) ? $order->lr : json_decode($order->lr, true);
-                                                      foreach ($lrNumbers as $lrNumber) {
-                                                         $detail = collect($lrs)->firstWhere('lr_number', $lrNumber);
-                                                         if (isset($detail['lr_date'])) {
-                                                               $date = \Carbon\Carbon::parse($detail['lr_date'])->format('Y-m-d');
-                                                               if (!in_array($date, $lrDates)) {
-                                                                  $lrDates[] = $date;
-                                                               }
-                                                         }
-                                                      }
-                                                   }
-                                             }
-                                          }
-                                       }
-                                 @endphp
-
-                                 @foreach($lrDates as $date)
-                                       {{ $date }}<br>
-                                 @endforeach
-                              @endforeach
-                           </td>
-
-                           <!-- From Location -->
-                           <!-- From Location -->
-                           <td>
                               @php
-                              $fromLocations = collect();
-                              foreach ($entries as $e) {
-                              $orderIds = json_decode($e->order_id, true);
-                              if (is_array($orderIds)) {
-                              foreach ($orderIds as $orderId) {
-                              $order = \App\Models\Order::where('order_id', $orderId)->first();
-                              if ($order) {
-                              $lrs = is_array($order->lr) ? $order->lr : json_decode($order->lr, true);
-                              foreach ($lrs as $lr) {
-                              if (!empty($lr['from_location'])) {
-                              $location = \App\Models\Destination::find($lr['from_location']);
-                              if ($location && !$fromLocations->contains('id', $location->id)) {
-                              $fromLocations->push($location);
-                              }
-                              }
-                              }
-                              }
-                              }
-                              }
-                              }
+                              $lrArray = is_array($e->order->lr)
+                              ? $e->order->lr
+                              : json_decode($e->order->lr, true);
+                              $detail  = collect($lrArray)
+                              ->firstWhere('lr_number', $e->lr_number);
                               @endphp
-                              @foreach($fromLocations as $fromLocation)
-                              {{ $fromLocation->destination }}<br>
+                              {{ isset($detail['lr_date'])
+                              ? \Carbon\Carbon::parse($detail['lr_date'])->format('Y-m-d')
+                              : '-' 
+                              }}<br>
                               @endforeach
                            </td>
-                           <!-- To Location -->
-                           <!-- To Location -->
+                           <!-- From Location -->
+                           <!-- From Location Name -->
                            <td>
+                              @foreach($entries as $e)
                               @php
-                              $toLocations = collect();
-                              foreach ($entries as $e) {
-                              $orderIds = json_decode($e->order_id, true);
-                              if (is_array($orderIds)) {
-                              foreach ($orderIds as $orderId) {
-                              $order = \App\Models\Order::where('order_id', $orderId)->first();
-                              if ($order) {
-                              $lrs = is_array($order->lr) ? $order->lr : json_decode($order->lr, true);
-                              foreach ($lrs as $lr) {
-                              if (!empty($lr['to_location'])) {
-                              $location = \App\Models\Destination::find($lr['to_location']);
-                              if ($location && !$toLocations->contains('id', $location->id)) {
-                              $toLocations->push($location);
-                              }
-                              }
-                              }
-                              }
-                              }
-                              }
-                              }
+                              $lrArray = is_array($e->order->lr)
+                              ? $e->order->lr
+                              : json_decode($e->order->lr, true);
+                              $detail  = collect($lrArray)
+                              ->firstWhere('lr_number', $e->lr_number);
+                              // Fetch from_location name
+                              $fromLocation = \App\Models\Destination::find($detail['from_location'] ?? null);
                               @endphp
-                              @foreach($toLocations as $toLocation)
-                              {{ $toLocation->destination }}<br>
+                              {{ $fromLocation->destination ?? 'Unknown Location' }}<br>
                               @endforeach
                            </td>
-                           @if (hasAdminPermission('edit freight_bill') || hasAdminPermission('delete freight_bill') || hasAdminPermission('view freight_bill'))
+                           <!-- To Location Name -->
+                           <td>
+                              @foreach($entries as $e)
+                              @php
+                              $lrArray = is_array($e->order->lr)
+                              ? $e->order->lr
+                              : json_decode($e->order->lr, true);
+                              $detail  = collect($lrArray)
+                              ->firstWhere('lr_number', $e->lr_number);
+                              // Fetch to_location name
+                              $toLocation = \App\Models\Destination::find($detail['to_location'] ?? null);
+                              @endphp
+                              {{ $toLocation->destination ?? 'Unknown Location' }}<br>
+                              @endforeach
+                           </td>
+                           @if (hasAdminPermission('edit freight_bill') || hasAdminPermission('delete freight_bill')|| hasAdminPermission('view freight_bill'))
+
                            <td>
                               @if (hasAdminPermission('view freight_bill'))
-                              <a href="{{ route('admin.freight-bill.view', $e->id) }}" class="btn btn-sm btn-light view-btn" data-bs-toggle="tooltip" title="View Freight Bill"><i class="fas fa-eye text-primary"></i></a>
-                              @endif
-                              @if (hasAdminPermission('edit freight_bill'))
-                              <a href="" class="btn btn-sm btn-light" data-bs-toggle="tooltip" title="Edit Freight Bill"><i class="fas fa-pen text-warning"></i></a>
-                              @endif
-                              @if (hasAdminPermission('delete freight_bill'))
-                              <a href="#" data-url="{{ route('admin.freight-bill.delete', $e->id) }}" class="btn btn-sm btn-light delete-btn" data-bs-toggle="tooltip" title="Delete Freight Bill">
-                                 <i class="fas fa-trash text-danger"></i>
-                              </a>
-                              @endif
+                              <button class="btn btn-sm btn-light view-btn"><i
+                                 class="fas fa-eye text-primary"></i></button>
+                                 @endif
+                                 @if (hasAdminPermission('edit freight_bill'))
+                              <a href="" class="btn btn-sm btn-light"><i
+                                 class="fas fa-pen text-warning"></i></a>
+                                 @endif
+                                 @if (hasAdminPermission('delete freight_bill'))
+                              <button class="btn btn-sm btn-light delete-btn"><i
+                                 class="fas fa-trash text-danger"></i></button>
+                                 @endif
                            </td>
                            @endif
                         </tr>
                         @endforeach
-                        @endif
                      </tbody>
                   </table>
                </div>
@@ -345,40 +268,36 @@
            });  
    });
 </script>
-
- <script>
-document.addEventListener('DOMContentLoaded', function () {
-    document.querySelectorAll('.delete-btn').forEach(button => {
-        button.addEventListener('click', function (e) {
-            e.preventDefault();
-
-            if (!confirm('Are you sure you want to delete this freight-bill record?')) return;
-
-            const url = this.getAttribute('data-url');
-
-            fetch(url, {
-                method: 'DELETE',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                alert(data.message || 'Deleted successfully.');
-                if (data.status === 'success') {
-                    location.reload();
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Something went wrong.');
-            });
-        });
-    });
-});
-
-
+<script>
+   document.addEventListener('DOMContentLoaded', function () {
+       document.querySelectorAll('.delete-btn').forEach(button => {
+           button.addEventListener('click', function (e) {
+               e.preventDefault();
+   
+               if (!confirm('Are you sure you want to delete this freight-bill record?')) return;
+   
+               const url = this.getAttribute('data-url');
+   
+               fetch(url, {
+                   method: 'DELETE',
+                   headers: {
+                       'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                       'Accept': 'application/json'
+                   }
+               })
+               .then(response => response.json())
+               .then(data => {
+                   alert(data.message);
+                   if (data.status === 'success') {
+                       location.reload(); // Reload the page on success
+                   }
+               })
+               .catch(error => {
+                   console.error('Error:', error);
+                   alert('Something went wrong.');
+               });
+           });
+       });
+   });
 </script>
 @endsection

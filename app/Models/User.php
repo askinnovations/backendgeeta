@@ -29,7 +29,7 @@ class User extends Authenticatable
         'address',
         'role',
     ];
-    // ✅ JSON से Array में Convert करने के लिए
+   
     protected $casts = [
         'address' => 'array',
         'gst_number' => 'array',

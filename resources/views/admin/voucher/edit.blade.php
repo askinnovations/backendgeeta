@@ -103,7 +103,7 @@
                                                     <textarea class="form-control" name="vouchers[{{ $index }}][narration]">{{ $row['narration'] ?? '' }}</textarea>
                                                     <div class="form-check mt-2">
                                                         <input type="checkbox" class="form-check-input toggle-tally" id="toggle_tally_{{ $index }}" {{ empty($row['tally_narration']) ? 'checked' : '' }}>
-                                                        <label class="form-check-label" for="toggle_tally_{{ $index }}">Tally Same as Narration</label>
+                                                        <label class="form-check-label" for="toggle_tally_{{ $index }}">Add Tally Narration</label>
                                                     </div>
                                                 </div>
                                             </div>
