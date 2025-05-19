@@ -16,9 +16,7 @@
                     @endif
                 </li>
 
-               
-
-                <!-- Consignment  pod update Booking -->
+               <!-- Consignment  pod update Booking -->
                 @if (hasAdminPermission('manage order_booking') || hasAdminPermission('manage lr_consignment') || hasAdminPermission('manage freight_bill'))
                     <li>
                         <a href="javascript:void(0);" class="has-arrow">
