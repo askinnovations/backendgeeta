@@ -77,8 +77,6 @@
             </div>
          </div>
       </div>
-      <!-- pod upload -->
-      <!-- pod upload -->
    </div>
    <!-- End Page-content -->
 </div>

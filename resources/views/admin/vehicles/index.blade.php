@@ -77,20 +77,17 @@
                                             <td>
                                                 @if (hasAdminPermission('view vehicles'))
                                                     <a href="{{ route('admin.vehicles.view', ['id' => $vehicle->id]) }}"
-                                                        class="btn btn-sm btn-light view-btn" data-bs-toggle="tooltip" title="View Vehicle"><i
+                                                        class="btn btn-sm btn-light view-btn"><i
                                                             class="fas fa-eye text-primary"></i></a>
                                                 @endif
                                                 @if (hasAdminPermission('edit vehicles'))
                                                     <a href="{{ route('admin.vehicles.edit', ['id' => $vehicle->id]) }}"
-                                                        class="btn btn-sm btn-light edit-btn"  data-bs-toggle="tooltip" title="Edit Vehicle">
-                                                        <i
+                                                        class="btn btn-sm btn-light edit-btn"><i
                                                             class="fas fa-pen text-warning"></i></a>
                                                 @endif
                                                 @if (hasAdminPermission('delete vehicles'))
                                                     <button class="btn btn-sm btn-light delete-btn" data-id="{{ $vehicle->id }}"
-                                                        data-bs-toggle="modal" data-bs-target="#deleteUserModal"
-                                                         data-bs-toggle="tooltip" title="Delete Vehicle"
-                                                        >
+                                                        data-bs-toggle="modal" data-bs-target="#deleteUserModal">
                                                         <i class="fas fa-trash text-danger"></i>
                                                     </button>
                                                 @endif

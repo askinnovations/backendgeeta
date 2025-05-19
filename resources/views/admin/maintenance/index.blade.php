@@ -106,8 +106,6 @@
         <td>
           @if (hasAdminPermission('view maintenance'))
         <button class="btn btn-sm btn-light view-btn" data-id="{{ $maintenance->id }}"
-         data-bs-toggle="tooltip" 
-        title="View Maintenance"
           data-vehicle="{{ $maintenance->vehicle }}" data-category="{{ $maintenance->category }}"
           data-vendor="{{ $maintenance->vendor}}"
           data-odometer_reading="{{ $maintenance->odometer_reading }}"
@@ -117,8 +115,6 @@
         @endif
         @if (hasAdminPermission('edit maintenance'))
         <button class="btn btn-sm btn-light edit-btn" data-bs-toggle="modal"
-        data-bs-toggle="tooltip" 
-        title="edit maintenance"
           data-bs-target="#updateMaintenanceModal" data-id="{{ $maintenance->id }}"
           data-vehicle="{{ $maintenance->vehicle }}" data-category="{{ $maintenance->category }}"
           data-vendor="{{ $maintenance->vendor}}"
@@ -128,8 +124,7 @@
         </button>
         @endif
         @if (hasAdminPermission('delete maintenance'))
-        <button class="btn btn-sm btn-light delete-btn" data-bs-toggle="tooltip" 
-        title="delete maintenance"><A
+        <button class="btn btn-sm btn-light delete-btn"><A
           href="{{ route('admin.maintenance.delete', $maintenance->id) }}"  onclick="return confirm('Are you sure you want to delete this maintenance record?')">
           <i class="fas fa-trash text-danger"></i></a>
         </button>

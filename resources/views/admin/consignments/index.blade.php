@@ -1,6 +1,7 @@
 @extends('admin.layouts.app')
 @section('title', 'Order | KRL')
 @section('content')
+{{-- @dd($orders); --}}
 <div class="page-content">
    <div class="container-fluid">
       <!-- start page title -->
@@ -17,7 +18,7 @@
             </div>
          </div>
       </div>
-      <!-- end page title -->
+    
       <!-- Order Booking listing Page -->
       <div class="row listing-form">
          <div class="col-12">
@@ -70,6 +71,7 @@
                            @php
                            $lrDetails = is_array($order->lr) ? $order->lr : json_decode($order->lr, true);
                            @endphp
+
                            @if(!empty($lrDetails) && count($lrDetails) > 0)
                            @foreach($lrDetails as $lr)
                            <tr class="lr-row" data-id="{{ $order->id }}">
@@ -126,6 +128,7 @@
                         </tbody>
                      </table>
                   </div>
+
                </div>
             </div>
          </div>

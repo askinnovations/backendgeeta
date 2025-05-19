@@ -84,8 +84,6 @@
                                             <td>
                                                 @if (hasAdminPermission('view tyres'))
                                                 <button class="btn btn-sm btn-light view-btn"
-                                                   data-bs-toggle="tooltip" 
-                                                    title="view tyres"
                                                     data-bs-toggle="modal"
                                                     data-bs-target="#viewTyreModal"
                                                     data-company="{{ $tyre->company }}"
@@ -100,8 +98,6 @@
                                                 @endif
                                                 @if (hasAdminPermission('edit tyres'))
                                                 <button class="btn btn-sm btn-light edit-btn"
-                                                    data-bs-toggle="tooltip" 
-                                                    title="edit tyres"
                                                     data-id="{{ $tyre->id }}"
                                                     data-company="{{ $tyre->company }}"
                                                     data-make_model="{{ $tyre->make_model }}"
@@ -115,8 +111,7 @@
                                                 </button>
                                                 @endif
                                                 @if (hasAdminPermission('delete tyres'))
-                                                <button class="btn btn-sm btn-light delete-btn" data-bs-toggle="tooltip" 
-                                                    title="delete tyres"><a
+                                                <button class="btn btn-sm btn-light delete-btn"><a
                                                         href="{{ route('admin.tyres.delete', $tyre->id) }}"  onclick="return confirm('Are you sure you want to delete this tyre record?')"> <i
                                                             class="fas fa-trash text-danger"></i>
                                                     </a>

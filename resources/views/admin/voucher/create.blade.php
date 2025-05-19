@@ -94,7 +94,7 @@
                                                             <textarea class="form-control" name="vouchers[0][narration]" rows="2"></textarea>
                                                             <div class="form-check mt-2">
                                                                 <input type="checkbox" class="form-check-input toggle-tally" id="toggle_tally_0" checked>
-                                                                <label class="form-check-label" for="toggle_tally_0">Tally Same as Narration</label>
+                                                                <label class="form-check-label" for="toggle_tally_0">Add Tally Narration</label>
                                                             </div>
                                                         </div>
                                                     </div>
