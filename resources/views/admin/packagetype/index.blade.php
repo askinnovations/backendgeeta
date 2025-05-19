@@ -69,37 +69,42 @@
                                     <td>{{ $loop->iteration  }}</td>
                                      <td>{{ $tyre->package_type }}</td>
                                      @if (hasAdminPermission('edit package_type') || hasAdminPermission('delete package_type')|| hasAdminPermission('view package_type'))
-                                          <td>
-                                            @if (hasAdminPermission('view package_type'))
-                                                <button class="btn btn-sm btn-light view-btn"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#viewTyreModal"
-                                                    data-package_type="{{ $tyre->package_type }}"
-                                                    
+    <td>
+        @if (hasAdminPermission('view package_type'))
+            <button class="btn btn-sm btn-light view-btn"
+                data-bs-toggle="modal"
+                data-bs-target="#viewTyreModal"
+                data-package_type="{{ $tyre->package_type }}"
+                onclick="viewTyreData(this)"
+                title="View Package Type"
+                data-bs-toggle="tooltip">
+                <i class="fas fa-eye text-primary"></i>
+            </button>
+        @endif
 
-                                                    onclick="viewTyreData(this)">
-                                                    <i class="fas fa-eye text-primary"></i>
-                                                </button>
-                                                @endif
-                                                @if (hasAdminPermission('edit package_type'))
-                                                <button class="btn btn-sm btn-light edit-btn"
-                                                    data-id="{{ $tyre->id }}"
-                                                    data-name="{{ $tyre->package_type }}"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#updateTyreModal">
-                                                    <i class="fas fa-pen text-warning"></i>
-                                                </button>
-                                                @endif
-                                                @if (hasAdminPermission('delete package_type'))
-                                                <button class="btn btn-sm btn-light delete-btn"><a
-                                                        href="{{ route('admin.packagetype.delete', $tyre->id) }}"  onclick="return confirm('Are you sure you want to delete this tyre record?')"> <i
-                                                            class="fas fa-trash text-danger"></i>
-                                                    </a>
-                                                </button>
-                                                @endif
-                                            
-                                            </td>
-                                            @endif
+        @if (hasAdminPermission('edit package_type'))
+            <button class="btn btn-sm btn-light edit-btn"
+                data-id="{{ $tyre->id }}"
+                data-name="{{ $tyre->package_type }}"
+                data-bs-toggle="modal"
+                data-bs-target="#updateTyreModal"
+                title="Edit Package Type"
+                data-bs-toggle="tooltip">
+                <i class="fas fa-pen text-warning"></i>
+            </button>
+        @endif
+
+        @if (hasAdminPermission('delete package_type'))
+            <button class="btn btn-sm btn-light delete-btn" title="Delete Package Type" data-bs-toggle="tooltip">
+                <a href="{{ route('admin.packagetype.delete', $tyre->id) }}"
+                   onclick="return confirm('Are you sure you want to delete this tyre record?')">
+                    <i class="fas fa-trash text-danger"></i>
+                </a>
+            </button>
+        @endif
+    </td>
+@endif
+
                                         </tr>
                                     @endforeach
 

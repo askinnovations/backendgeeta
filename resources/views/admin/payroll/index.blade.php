@@ -77,22 +77,28 @@
                                             <td>{{ $data['present_days'] }}</td>
                                             <td>{{ $data['working_days'] }}</td>
 
-                                            <td>
-                                                @if (hasAdminPermission('view payroll'))
-                                                 <a href="{{ route('admin.payroll.show', $data['employee']->id) }}"> <button
-                                                class="btn btn-light btn-sm edit-btn">
-                                                <i class="fas fa-eye text-primary"></i>
-                                            </button></a>
-                                            @endif
+                                           <td>
+    @if (hasAdminPermission('view payroll'))
+    <a href="{{ route('admin.payroll.show', $data['employee']->id) }}">
+        <button class="btn btn-light btn-sm edit-btn" data-bs-toggle="tooltip" title="View Payroll">
+            <i class="fas fa-eye text-primary"></i>
+        </button>
+    </a>
+    @endif
 
-                                        <a href=""> <button
-                                                class="btn btn-light btn-sm edit-btn">
-                                                <i class="fas fa-pen text-warning"></i>
-                                            </button></a>
-                                        <button class="btn btn-sm btn-light delete-btn"><a
-                                                href="">
-                                                <i class="fas fa-trash text-danger"></i></a>
-                                        </button></td>
+    <a href="">
+        <button class="btn btn-light btn-sm edit-btn" data-bs-toggle="tooltip" title="Edit Payroll">
+            <i class="fas fa-pen text-warning"></i>
+        </button>
+    </a>
+
+    <button class="btn btn-sm btn-light delete-btn" data-bs-toggle="tooltip" title="Delete Payroll">
+        <a href="">
+            <i class="fas fa-trash text-danger"></i>
+        </a>
+    </button>
+</td>
+
                                         </tr>
                                         @endforeach
                                 </tbody>

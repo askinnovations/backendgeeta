@@ -47,84 +47,88 @@
                   </form>
                </div>
                <div class="card-body">
-                  <table id="datatable" class="table table-bordered dt-responsive nowrap w-100">
-                     <thead>
-                        <tr>
-                           <th><input type="checkbox" id="selectAll"></th>
-                           <th>S.No</th>
-                           <th>Order ID</th>
-                           <th>LR NO</th>
-                           <th>Consignor</th>
-                           <th>Consignee</th>
-                           <th>Date</th>
-                           <th>From</th>
-                           <th>To</th>
-                           @if (hasAdminPermission('edit lr_consignment') || hasAdminPermission('delete lr_consignment')|| hasAdminPermission('view lr_consignment'))
-                           <th>Action</th>
-                           @endif
-                        </tr>
-                     </thead>
-                     <tbody>
-                        @php $rowCount = 1; @endphp
-                        @foreach($orders as $order)
-                        @php
-                        $lrDetails = is_array($order->lr) ? $order->lr : json_decode($order->lr, true);
-                        @endphp
-                        @if(!empty($lrDetails) && count($lrDetails) > 0)
-                        @foreach($lrDetails as $lr)
-                        <tr class="lr-row" data-id="{{ $order->id }}">
-                           <td>
-                              <input type="checkbox" class="lr-checkbox" value="{{ $order->order_id }}|{{ $lr['lr_number'] ?? '' }}">
-                           </td>
-                           <td>{{ $rowCount++ }}</td>
-                           <td>{{ $order->order_id }}</td>
-                           <td>{{ $lr['lr_number'] ?? '-' }}</td>
-                           <td>
-                              @php
-                              $consignorUser = \App\Models\User::find($lr['consignor_id'] ?? null);
-                              $consignorName = $order->consignor->name ?? ($consignorUser->name ?? '-');
-                              @endphp
-                              {{ $consignorName }}
-                           </td>
-                           <td>
-                              @php
-                              $consigneeUser = \App\Models\User::find($lr['consignee_id'] ?? null);
-                              $consigneeName = $order->consignee->name ?? ($consigneeUser->name ?? '-');
-                              @endphp
-                              {{ $consigneeName }}
-                           </td>
-                           <td>{{ $lr['lr_date'] ?? '-' }}</td>
+                  <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
+                     <table id="datatable" class="table table-bordered dt-responsive nowrap w-100">
+                        <thead>
+                           <tr>
+                              <th><input type="checkbox" id="selectAll"></th>
+                              <th>S.No</th>
+                              <th>Order ID</th>
+                              <th>LR NO</th>
+                              <th>Consignor</th>
+                              <th>Consignee</th>
+                              <th>Date</th>
+                              <th>From</th>
+                              <th>To</th>
+                              @if (hasAdminPermission('edit lr_consignment') || hasAdminPermission('delete lr_consignment')|| hasAdminPermission('view lr_consignment'))
+                              <th>Action</th>
+                              @endif
+                           </tr>
+                        </thead>
+                        <tbody>
+                           @php $rowCount = 1; @endphp
+                           @foreach($orders as $order)
                            @php
-                           $fromDestination = \App\Models\Destination::find($lr['from_location']);
-                           $toDestination = \App\Models\Destination::find($lr['to_location']);
+                           $lrDetails = is_array($order->lr) ? $order->lr : json_decode($order->lr, true);
                            @endphp
-                           <td>{{ $fromDestination->destination ?? '-' }}</td>
-                           <td>{{ $toDestination->destination ?? '-' }}</td>
-                           @if (hasAdminPermission('edit lr_consignment') || hasAdminPermission('delete lr_consignment')|| hasAdminPermission('view lr_consignment'))
-                           <td>
-                               {{-- <span>{{ $order->order_id }} - {{ $lr['lr_number'] }}</span> --}}
-                              @if (hasAdminPermission('view lr_consignment'))
-                              <a href="{{ route('admin.consignments.documents', [$order->order_id, $lr['lr_number']]) }}" class="btn btn-sm btn-light"><i class="fas fa-file-alt text-primary"></i></a>
+
+                           @if(!empty($lrDetails) && count($lrDetails) > 0)
+                           @foreach($lrDetails as $lr)
+                           <tr class="lr-row" data-id="{{ $order->id }}">
+                              <td>
+                                 <input type="checkbox" class="lr-checkbox" value="{{ $order->order_id }}|{{ $lr['lr_number'] ?? '' }}">
+                              </td>
+                              <td>{{ $rowCount++ }}</td>
+                              <td>{{ $order->order_id }}</td>
+                              <td>{{ $lr['lr_number'] ?? '-' }}</td>
+                              <td>
+                                 @php
+                                 $consignorUser = \App\Models\User::find($lr['consignor_id'] ?? null);
+                                 $consignorName = $order->consignor->name ?? ($consignorUser->name ?? '-');
+                                 @endphp
+                                 {{ $consignorName }}
+                              </td>
+                              <td>
+                                 @php
+                                 $consigneeUser = \App\Models\User::find($lr['consignee_id'] ?? null);
+                                 $consigneeName = $order->consignee->name ?? ($consigneeUser->name ?? '-');
+                                 @endphp
+                                 {{ $consigneeName }}
+                              </td>
+                              <td>{{ $lr['lr_date'] ?? '-' }}</td>
+                              @php
+                              $fromDestination = \App\Models\Destination::find($lr['from_location']);
+                              $toDestination = \App\Models\Destination::find($lr['to_location']);
+                              @endphp
+                              <td>{{ $fromDestination->destination ?? '-' }}</td>
+                              <td>{{ $toDestination->destination ?? '-' }}</td>
+
+                              
+                              @if (hasAdminPermission('edit lr_consignment') || hasAdminPermission('delete lr_consignment')|| hasAdminPermission('view lr_consignment'))
+                              <td>
+                                 @if (hasAdminPermission('view lr_consignment'))
+                                 <a href="{{ route('admin.consignments.documents', $lr['lr_number']) }}" class="btn btn-sm btn-light" data-bs-toggle="tooltip" title="View Documents"><i class="fas fa-file-alt text-primary"></i></a>
+                                 @endif
+                                 @if (hasAdminPermission('view lr_consignment'))
+                                 <a href="{{ route('admin.consignments.view', $lr['lr_number']) }}" class="btn btn-sm btn-light" data-bs-toggle="tooltip" title="View Details"><i class="fas fa-eye text-primary"></i></a>
+                                 @endif
+                                 @if (hasAdminPermission('edit lr_consignment'))
+                                 <a href="{{ route('admin.consignments.edit', $order->order_id) }}" class="btn btn-sm btn-light" data-bs-toggle="tooltip" title="Edit Consignment"><i class="fas fa-pen text-warning"></i></a>
+                                 @endif
+                                 @if (hasAdminPermission('delete lr_consignment'))
+                                 <a href="{{ route('admin.consignments.delete', $order->order_id) }}" class="btn btn-sm btn-light" data-bs-toggle="tooltip" title="Delete Consignment"><i class="fas fa-trash text-danger"></i></a>
+                                 @endif
+                              </td>
                               @endif
-                              @if (hasAdminPermission('view lr_consignment'))
-                              <a href="{{ route('admin.consignments.view', [$order->order_id, $lr['lr_number']]) }}" class="btn btn-sm btn-light"><i class="fas fa-eye text-primary"></i></a>
-                              @endif
-                              @if (hasAdminPermission('edit lr_consignment'))
-                             <a href="{{ route('admin.consignments.edit', [$order->order_id, $lr['lr_number']]) }}" class="btn btn-sm btn-light">
-                                 <i class="fas fa-pen text-warning"></i>
-                              </a>
-                              @endif
-                              @if (hasAdminPermission('delete lr_consignment'))
-                              <a href="{{ route('admin.consignments.delete', [$order->order_id, $lr['lr_number']]) }}" class="btn btn-sm btn-light"><i class="fas fa-trash text-danger"></i></a>
-                              @endif
-                           </td>
+
+                           </tr>
+                           @endforeach
                            @endif
-                        </tr>
-                        @endforeach
-                        @endif
-                        @endforeach
-                     </tbody>
-                  </table>
+                           @endforeach
+                        </tbody>
+                     </table>
+                  </div>
+
                </div>
             </div>
          </div>
@@ -136,6 +140,10 @@
 <!-- Add this before any script that uses jQuery -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <!-- Script to collect selected order IDs and submit the form -->
+<!-- Add this where scripts are loaded, usually in layouts/app.blade.php -->
+
+
+
 <!-- JavaScript -->
 <script>
    const generateBtn = document.getElementById("generateBtn");

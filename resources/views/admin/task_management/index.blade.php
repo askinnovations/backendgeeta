@@ -130,21 +130,24 @@
                                 <td>{{ \Carbon\Carbon::parse($task->date)->format('Y-m-d') }}</td>
                                 @if (hasAdminPermission('edit task_managment') || hasAdminPermission('delete task_managment')|| hasAdminPermission('view task_managment'))
                                 <td>
-                             @if (hasAdminPermission('view task_managment'))
-                                 <button class="btn btn-sm btn-light view-btn"><i class="fas fa-eye text-primary"></i></button>
+                                 @if (hasAdminPermission('view task_managment'))
+                                 <button class="btn btn-sm btn-light view-btn" data-bs-toggle="tooltip" title="View Task"><i class="fas fa-eye text-primary"></i></button>
                                  @endif
-                            @if (hasAdminPermission('edit task_managment'))
+                                @if (hasAdminPermission('edit task_managment'))
                                 <button class="btn btn-light  edit-btn" data-bs-toggle="modal" data-bs-target="#editTaskModal"
                                 data-id="{{ $task->id }}"
                                 data-assigned_to="{{ $task->assigned_to }}"
                                 data-description="{{ $task->description }}"
                                 data-high_priority="{{ $task->high_priority }}"
-                                data-date="{{ $task->date }}">
+                                data-date="{{ $task->date }}"
+                                data-bs-toggle="tooltip" 
+                                title="Edit Task">
+                                
                                 <i class="fas fa-pen text-warning"></i>
                                 </button>
                                 @endif
                                 @if (hasAdminPermission('delete task_managment'))
-                                <a href="{{ route('admin.task_management.delete',$task->id) }}"  >  <button class="btn btn-sm btn-light delete-btn"><i class="fas fa-trash text-danger"></i></button></a>
+                                <a href="{{ route('admin.task_management.delete',$task->id) }}"  >  <button class="btn btn-sm btn-light delete-btn" data-bs-toggle="tooltip" title="Delete Task"><i class="fas fa-trash text-danger"></i></button></a>
                                 @endif
                                 </td>
                                 @endif
@@ -221,7 +224,7 @@
                             <td>{{ \Carbon\Carbon::parse($task->date)->format('Y-m-d') }}</td>
                             <td>
                                 @if (hasAdminPermission('view task_managment'))
-                                <button class="btn  btn-light view-btn"><i class="fas fa-eye text-primary"></i></button>
+                                <button class="btn  btn-light view-btn" data-bs-toggle="tooltip" title="View Task"><i class="fas fa-eye text-primary"></i></button>
                                 @endif
                                 @if (hasAdminPermission('edit task_managment'))
                                 <button class="btn btn-light edit-btn" data-bs-toggle="modal" data-bs-target="#editTaskModal"
@@ -229,12 +232,14 @@
                                     data-assigned_to="{{ $task->assigned_to }}"
                                     data-description="{{ $task->description }}"
                                     data-high_priority="{{ $task->high_priority }}"
-                                    data-date="{{ $task->date }}">
+                                    data-date="{{ $task->date }}"
+                                    data-bs-toggle="tooltip" 
+                                    title="Edit Task">
                                     <i class="fas fa-pen text-warning"></i>
                                 </button>
                                 @endif
                                 @if (hasAdminPermission('delete task_managment'))
-                                <a href="{{ route('admin.task_management.delete', $task->id) }}">
+                                <a href="{{ route('admin.task_management.delete', $task->id) }}" data-bs-toggle="tooltip" title="Delete Task">
                                     <button class="btn btn-sm btn-light delete-btn"><i class="fas fa-trash text-danger"></i></button>
                                 </a>
                                 @endif

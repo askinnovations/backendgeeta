@@ -68,37 +68,45 @@
                                     @foreach($tyres as $tyre)
                                     <td>{{ $loop->iteration  }}</td>
                                      <td>{{ $tyre->destination }}</td>
-                                @if (hasAdminPermission('edit destination') || hasAdminPermission('delete destination')|| hasAdminPermission('view destination'))
+                                @if (hasAdminPermission('edit destination') || hasAdminPermission('delete destination') || hasAdminPermission('view destination'))
+    <td>
+        @if (hasAdminPermission('view destination'))
+            <button class="btn btn-sm btn-light view-btn"
+                data-bs-toggle="modal"
+                data-bs-target="#viewTyreModal"
+                data-package_type="{{ $tyre->destination }}"
+                onclick="viewTyreData(this)"
+                title="View Destination"
+                data-bs-toggle="tooltip">
+                <i class="fas fa-eye text-primary"></i>
+            </button>
+        @endif
 
-                                          <td>
+        @if (hasAdminPermission('edit destination'))
+            <button class="btn btn-sm btn-light edit-btn"
+                data-id="{{ $tyre->id }}"
+                data-name="{{ $tyre->destination }}"
+                data-bs-toggle="modal"
+                data-bs-target="#updateTyreModal"
+                title="Edit Destination"
+                data-bs-toggle="tooltip">
+                <i class="fas fa-pen text-warning"></i>
+            </button>
+        @endif
 
-                                            @if (hasAdminPermission('view destination'))
-                                                <button class="btn btn-sm btn-light view-btn"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#viewTyreModal"
-                                                    data-package_type="{{ $tyre->destination }}"
-                                                    onclick="viewTyreData(this)">
-                                                    <i class="fas fa-eye text-primary"></i>
-                                                </button>
-                                                @endif
-                                                @if (hasAdminPermission('edit destination'))
-                                                <button class="btn btn-sm btn-light edit-btn"
-                                                    data-id="{{ $tyre->id }}"
-                                                    data-name="{{ $tyre->destination }}"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#updateTyreModal">
-                                                    <i class="fas fa-pen text-warning"></i>
-                                                </button>
-                                                @endif
-                                                @if (hasAdminPermission('delete destination'))
-                                                <button class="btn btn-sm btn-light delete-btn"><a
-                                                        href="{{ route('admin.destination.delete', $tyre->id) }}"  onclick="return confirm('Are you sure you want to delete this tyre record?')"> <i
-                                                            class="fas fa-trash text-danger"></i>
-                                                    </a>
-                                                </button>
-                                                @endif
-                                            </td>
-                                            @endif
+        @if (hasAdminPermission('delete destination'))
+            <button class="btn btn-sm btn-light delete-btn"
+                title="Delete Destination"
+                data-bs-toggle="tooltip">
+                <a href="{{ route('admin.destination.delete', $tyre->id) }}"
+                   onclick="return confirm('Are you sure you want to delete this tyre record?')">
+                    <i class="fas fa-trash text-danger"></i>
+                </a>
+            </button>
+        @endif
+    </td>
+@endif
+
                                         </tr>
                                     @endforeach
 

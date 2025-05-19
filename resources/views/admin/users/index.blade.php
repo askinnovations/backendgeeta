@@ -101,27 +101,31 @@
                                                 @endif
                                             </td>
                                             @if (hasAdminPermission('edit customer') || hasAdminPermission('delete customer') || hasAdminPermission('view customer'))
+    <td class="text-center">
+        <div class="d-flex align-items-center gap-2">
+            @if (hasAdminPermission('view customer'))
+                <button class="btn btn-sm btn-light view-btn" data-bs-toggle="tooltip" title="View Customer">
+                    <i class="fas fa-eye text-primary"></i>
+                </button>
+            @endif
 
-                                                <td class="text-center">
-                                                    <div class="d-flex  align-items-center gap-2">
-                                                        @if (hasAdminPermission('view customer'))
-                                                            <button class="btn btn-sm btn-light view-btn"><i
-                                                                    class="fas fa-eye text-primary"></i></button>
-                                                        @endif
-                                                        @if (hasAdminPermission('edit customer'))
-                                                            <button class="btn btn-sm btn-light edit-btn"><i
-                                                                    class="fas fa-pen text-warning"></i></button>
-                                                        @endif
+            @if (hasAdminPermission('edit customer'))
+                <button class="btn btn-sm btn-light edit-btn" data-bs-toggle="tooltip" title="Edit Customer">
+                    <i class="fas fa-pen text-warning"></i>
+                </button>
+            @endif
 
-                                                        @if (hasAdminPermission('delete customer'))
-                                                            <button class="btn btn-sm btn-light delete-btn" data-id="{{ $user->id }}"
-                                                                data-bs-toggle="modal" data-bs-target="#deleteUserModal">
-                                                                <i class="fas fa-trash text-danger"></i>
-                                                            </button>
-                                                        @endif
-                                                    </div>
-                                                </td>
-                                            @endif
+            @if (hasAdminPermission('delete customer'))
+                <button class="btn btn-sm btn-light delete-btn" data-id="{{ $user->id }}" 
+                        data-bs-toggle="modal" data-bs-target="#deleteUserModal"
+                        title="Delete Customer" data-bs-toggle="tooltip">
+                    <i class="fas fa-trash text-danger"></i>
+                </button>
+            @endif
+        </div>
+    </td>
+@endif
+
                                         </tr>
                                     @endforeach
                                 </tbody>

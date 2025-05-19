@@ -75,29 +75,33 @@
                                             <td>{{$driver->phone_number}}</td>
                                             <td>{{$driver->vehicle_number ?? ' '}}</td>
                                             @if (hasAdminPermission('edit destination') || hasAdminPermission('delete destination') || hasAdminPermission('view destination'))
-                                                <td><span class="badge bg-success">{{$driver->status}}</span></td>
-                                                <td> @if (hasAdminPermission('view drivers'))
-                                                    <a href="{{ route('admin.drivers.show', $driver->id) }}">
-                                                        <button class="btn btn-sm btn-light view-btn">
-                                                            <i class="fas fa-eye text-primary"></i>
-                                                        </button>
-                                                    </a>
-                                                @endif
-                                                    @if (hasAdminPermission('edit drivers'))
-                                                        <a href="{{ route('admin.drivers.edit', $driver->id) }}">
-                                                            <button class="btn btn-sm btn-light edit-btn">
-                                                                <i class="fas fa-pen text-warning"></i>
-                                                            </button></a>
-                                                    @endif
-                                                    @if (hasAdminPermission('delete drivers'))
-                                                        <a href="{{ route('admin.drivers.delete', $driver->id) }}">
-                                                            <button class="btn btn-sm btn-light delete-btn">
-                                                                <i class="fas fa-trash text-danger"></i>
-                                                            </button></a>
-                                                    @endif
-                                                </td>
-                                            @endif
+    <td><span class="badge bg-success">{{ $driver->status }}</span></td>
+    <td>
+        @if (hasAdminPermission('view drivers'))
+        <a href="{{ route('admin.drivers.show', $driver->id) }}">
+            <button class="btn btn-sm btn-light view-btn" data-bs-toggle="tooltip" title="View Driver">
+                <i class="fas fa-eye text-primary"></i>
+            </button>
+        </a>
+        @endif
 
+        @if (hasAdminPermission('edit drivers'))
+        <a href="{{ route('admin.drivers.edit', $driver->id) }}">
+            <button class="btn btn-sm btn-light edit-btn" data-bs-toggle="tooltip" title="Edit Driver">
+                <i class="fas fa-pen text-warning"></i>
+            </button>
+        </a>
+        @endif
+
+        @if (hasAdminPermission('delete drivers'))
+        <a href="{{ route('admin.drivers.delete', $driver->id) }}">
+            <button class="btn btn-sm btn-light delete-btn" data-bs-toggle="tooltip" title="Delete Driver">
+                <i class="fas fa-trash text-danger"></i>
+            </button>
+        </a>
+        @endif
+    </td>
+@endif
                                         </tr>
                                     @endforeach
                                 </tbody>

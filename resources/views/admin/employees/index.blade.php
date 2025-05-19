@@ -82,35 +82,42 @@
                                             <td>{{ $employee->department}}</td>
                                             <td>{{ $employee->date_of_joining}}</td>
 
-                                            @if (hasAdminPermission('edit employees') || hasAdminPermission('delete employees')|| hasAdminPermission('view employees'))
-
+                                           @if (hasAdminPermission('edit employees') || hasAdminPermission('delete employees') || hasAdminPermission('view employees'))
                                             <td>
                                                 @if (hasAdminPermission('view employees'))
-                                                <a href="{{ route('admin.employees.task', $employee->id) }}"> <button
-                                                    class="btn btn-light btn-sm edit-btn">
-                                                    <i class="fas fa-question-circle text-primary"></i>
-                                                </button></a>
+                                                <a href="{{ route('admin.employees.task', $employee->id) }}">
+                                                    <button class="btn btn-light btn-sm edit-btn" data-bs-toggle="tooltip" title="View Tasks">
+                                                        <i class="fas fa-question-circle text-primary"></i>
+                                                    </button>
+                                                </a>
                                                 @endif
+
                                                 @if (hasAdminPermission('view employees'))
-                                                <a href="{{ route('admin.employees.show', $employee->id) }}"> <button
-                                                        class="btn btn-light btn-sm edit-btn">
+                                                <a href="{{ route('admin.employees.show', $employee->id) }}">
+                                                    <button class="btn btn-light btn-sm edit-btn" data-bs-toggle="tooltip" title="View Profile">
                                                         <i class="fas fa-eye text-primary"></i>
-                                                    </button></a>
-                                                    @endif
-                                                    @if (hasAdminPermission('edit employees'))
-                                                <a href="{{ route('admin.employees.edit', $employee->id) }}"> <button
-                                                        class="btn btn-light btn-sm edit-btn">
+                                                    </button>
+                                                </a>
+                                                @endif
+
+                                                @if (hasAdminPermission('edit employees'))
+                                                <a href="{{ route('admin.employees.edit', $employee->id) }}">
+                                                    <button class="btn btn-light btn-sm edit-btn" data-bs-toggle="tooltip" title="Edit Employee">
                                                         <i class="fas fa-pen text-warning"></i>
-                                                    </button></a>
-                                                    @endif
-                                                 @if (hasAdminPermission('delete employees'))
-                                                <button class="btn btn-sm btn-light delete-btn"><a
-                                                        href="{{ route('admin.employees.delete', $employee->id) }}">
-                                                        <i class="fas fa-trash text-danger"></i></a>
-                                                </button>
+                                                    </button>
+                                                </a>
+                                                @endif
+
+                                                @if (hasAdminPermission('delete employees'))
+                                                <a href="{{ route('admin.employees.delete', $employee->id) }}">
+                                                    <button class="btn btn-sm btn-light delete-btn" data-bs-toggle="tooltip" title="Delete Employee">
+                                                        <i class="fas fa-trash text-danger"></i>
+                                                    </button>
+                                                </a>
                                                 @endif
                                             </td>
                                             @endif
+
                                         </tr>
                                     @endforeach
                                 </tbody>
