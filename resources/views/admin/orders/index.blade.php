@@ -103,28 +103,28 @@
 
 
                         @if (hasAdminPermission('edit order_booking') || hasAdminPermission('delete order_booking')|| hasAdminPermission('view order_booking'))
-                           <td>
+
+                            <td>
                               @if (hasAdminPermission('view order_booking'))
-                            <a href="{{ route('admin.orders.documents', $order->order_id) }}" class="btn btn-sm btn-light view-btn" data-bs-toggle="tooltip" title="View Documents"><i class="fas fa-file-alt text-primary"></i>
+                            <a href="{{ route('admin.orders.documents', $order->order_id) }}" class="btn btn-sm btn-light view-btn"><i class="fas fa-file-alt text-primary"></i>
                               @endif
                             </a>
                             @if (hasAdminPermission('view order_booking'))
-                            <a href="{{ route('admin.orders.view', $order->order_id) }}" class="btn btn-sm btn-light view-btn" data-bs-toggle="tooltip" title="View Order"><i class="fas fa-eye text-primary"></i>
+                            <a href="{{ route('admin.orders.view', $order->order_id) }}" class="btn btn-sm btn-light view-btn"><i class="fas fa-eye text-primary"></i>
                             </a>
                             @endif
                             @if (hasAdminPermission('edit order_booking'))
-                            <a href="{{ route('admin.orders.edit', $order->order_id) }}" class="btn btn-sm btn-light edit-btn" data-bs-toggle="tooltip" title="Edit Order">
+                            <a href="{{ route('admin.orders.edit', $order->order_id) }}" class="btn btn-sm btn-light edit-btn">
                                  <i class="fas fa-pen text-warning"></i>
                               </a>
                               @endif
                               @if (hasAdminPermission('delete order_booking'))
-                              <a href="{{ route('admin.orders.delete', $order->order_id) }}" class="btn btn-sm btn-light delete-btn" data-bs-toggle="tooltip" title="Delete Order"><i class="fas fa-trash text-danger"></i></a>
+                              <a href="{{ route('admin.orders.delete', $order->order_id) }}" class="btn btn-sm btn-light delete-btn"><i class="fas fa-trash text-danger"></i></a>
                               @endif
                             </td>
                             @endif
                         </tr>
                         @endforeach
-
                     </tbody>
                   </table>
                </div>

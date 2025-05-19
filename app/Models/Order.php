@@ -15,7 +15,7 @@ class Order extends Model
     protected $keyType = 'string'; 
     protected $fillable = [
         'order_id', 'description', 'order_date', 'status', 'user_id','from_destination_id','to_destination_id','order_type', 'cargo_description_type',
-        'customer_id', 'customer_gst', 'customer_address','package_id','remarks','pod_uploaded',
+        'customer_id', 'customer_gst', 'customer_address','package_id','remarks',
         'consignor_id', 'consignor_gst', 'consignor_loading',
         'consignee_id', 'consignee_gst', 'consignee_unloading','vehicle_no',
         'lr_number', 'lr_date', 'vehicle_date', 'vehicle_id', 'vehicle_ownership',
@@ -24,14 +24,12 @@ class Order extends Model
         'total_freight', 'less_advance', 'balance_freight', 'declared_value',
         'packages_no', 'package_type', 'package_description', 'weight',
         'actual_weight', 'charged_weight', 'document_no', 'document_name',
-        'document_date', 'eway_bill', 'valid_upto','order_method','byoder','pod_files'
+        'document_date', 'eway_bill', 'valid_upto','order_method','byoder'
     ];
     
     protected $casts = [
         'lr' => 'array',
         'status' => 'array',
-        'pod_file' => 'array',
-        
     ];
 
    

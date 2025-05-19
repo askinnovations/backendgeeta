@@ -19,6 +19,12 @@
                                     <input type="text" class="form-control" name="name" placeholder="Your Name" required>
                                 </div>
                             </div>
+                             <div class="form-group">
+                                <div class="form-icon">
+                                   <i class="far fa-envelope"></i>
+                                    <input type="email" class="form-control" name="email" placeholder="Your Email" required>
+                                </div>
+                            </div>
                             <div class="form-group">
                                 <div class="form-icon">
                                     <i class="far fa-phone"></i>

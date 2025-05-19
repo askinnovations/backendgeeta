@@ -199,7 +199,7 @@ Route::prefix('admin')->group(function () {
         Route::get('/view/{order_id}', [OrderController::class, 'show'])->name('admin.orders.view');
         Route::get('/documents/{order_id}', [OrderController::class, 'docView'])->name('admin.orders.documents');
         Route::post('/update/{order_id}', [OrderController::class, 'update'])->name('admin.orders.update');
-        Route::delete('/delete/{order_id}', [OrderController::class, 'destroy'])->name('admin.orders.delete');
+        Route::get('/delete/{order_id}', [OrderController::class, 'destroy'])->name('admin.orders.delete');
         Route::post('/update-status/{order_id}', [OrderController::class, 'updateStatus'])->name('admin.orders.updateStatus');
     });
    
@@ -211,15 +211,11 @@ Route::prefix('admin')->group(function () {
         Route::get('/', [ConsignmentNoteController::class, 'index'])->name('admin.consignments.index');
         Route::get('/create', [ConsignmentNoteController::class, 'create'])->name('admin.consignments.create');
         Route::post('/store', [ConsignmentNoteController::class, 'store'])->name('admin.consignments.store');
-        Route::get('/edit/{order_id}', [ConsignmentNoteController::class, 'edit'])->name('admin.consignments.edit');
-        Route::get('/view/{id}', [ConsignmentNoteController::class, 'show'])->name('admin.consignments.view');
-        Route::get('/documents/{id}', [ConsignmentNoteController::class, 'docView'])->name('admin.consignments.documents');
-        Route::post('/update/{order_id}', [ConsignmentNoteController::class, 'update'])->name('admin.consignments.update');
-        Route::get('/delete/{order_id}', [ConsignmentNoteController::class, 'destroy'])->name('admin.consignments.delete');
-        Route::post('/upload-pod', [ConsignmentNoteController::class, 'uploadPod'])->name('admin.consignments.uploadPod');
-        Route::get('/multiple-pod', [ConsignmentNoteController::class, 'multiplePodForm'])->name('admin.consignments.multiplePodForm');
-        Route::post('/multiple-pod-upload', [ConsignmentNoteController::class, 'uploadMultiplePod'])->name('admin.consignments.uploadMultiplePod');
-        
+       Route::get('edit/{order_id}/{lr_number}', [ConsignmentNoteController::class, 'edit'])->name('admin.consignments.edit');
+        Route::get('/view/{order_id}/{lr_number}', [ConsignmentNoteController::class, 'show'])->name('admin.consignments.view');
+        Route::get('/documents/{order_id}/{lr_number}', [ConsignmentNoteController::class, 'docView'])->name('admin.consignments.documents');
+        Route::post('/update/{order_id}/{lr_number}', [ConsignmentNoteController::class, 'update'])->name('admin.consignments.update');
+        Route::get('/delete/{order_id}/{lr_number}', [ConsignmentNoteController::class, 'destroy'])->name('admin.consignments.delete');
     });
 
     // Freight Bill Management
@@ -230,7 +226,7 @@ Route::prefix('admin')->group(function () {
         Route::get('/view/{id}', [FreightBillController::class, 'show'])->name('admin.freight-bill.view');
         Route::get('/edit-by-number/{freight_bill_number}', [FreightBillController::class, 'editByNumber'])->name('admin.freight-bill.edit');
         Route::put('/update/{freight_bill_number}', [FreightBillController::class, 'update'])->name('admin.freight-bill.update');
-        Route::delete('/delete/{id}', [FreightBillController::class, 'destroy'])->name('admin.freight-bill.delete');
+        Route::get('/delete/{id}', [FreightBillController::class, 'destroy'])->name('admin.freight-bill.delete');
     });
     
     
