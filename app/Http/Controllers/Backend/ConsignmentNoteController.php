@@ -28,11 +28,11 @@ class ConsignmentNoteController extends Controller implements HasMiddleware
             new Middleware('admin.permission:delete lr_consignment', only: ['destroy']),
         ];
     }
-   public function index(){
-    $orders = Order::latest()->get();
+    public function index(){
+        $orders = Order::latest()->get();
 
-    return view('admin.consignments.index', compact('orders'));
-   }
+        return view('admin.consignments.index', compact('orders'));
+    }
 
    public function create()
    {
@@ -417,11 +417,9 @@ public function docView($id)
     }
     
 
- public function uploadPod(Request $request)
+public function uploadPod(Request $request)
 {
-    
     $request->validate([
-       
         'pod_file' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
     ]);
 
@@ -431,18 +429,7 @@ public function docView($id)
     $matchedLRKey = null;
 
     foreach ($orders as $order) {
-        $lrRaw = $order->lr;
-
-        if (is_string($lrRaw)) {
-            $lrData = json_decode($lrRaw, true);
-            if (is_string($lrData)) {
-                $lrData = json_decode($lrData, true);
-            }
-        } elseif (is_array($lrRaw)) {
-            $lrData = $lrRaw;
-        } else {
-            $lrData = [];
-        }
+        $lrData = is_array($order->lr) ? $order->lr : json_decode($order->lr, true);
 
         foreach ($lrData as $key => $entry) {
             if (isset($entry['lr_number']) && $entry['lr_number'] === $inputLRNumber) {
@@ -450,46 +437,47 @@ public function docView($id)
                 $matchedLRKey = $key;
                 break 2;
             }
-          
         }
     }
-   
 
     if (!$matchedOrder || $matchedLRKey === null) {
         return back()->with('error', 'Order not found for the given LR number.');
     }
 
-    // ✅ Check if POD already exists for this LR
-    if (!empty($lrData[$matchedLRKey]['pod_files'])) {
-        return back()->with('error', 'POD already uploaded for this LR number.');
-    }
-
-    // Process POD file
     if ($request->hasFile('pod_file') && $request->file('pod_file')->isValid()) {
         $file = $request->file('pod_file');
-        $originalName = $file->getClientOriginalName();
-        $extension = $file->getClientOriginalExtension();
+        $extension = $file->extension();
+        $lrNumber = $inputLRNumber;
+        $filename = "POD_{$lrNumber}_" . now()->format('YmdHis') . '_' . Str::random(4) . '.' . $extension;
+        $relativePath = 'uploads/pods/' . $filename;
 
-        $sanitizedName = 'POD_LR-' . str_replace([' ', '_'], '-', pathinfo($originalName, PATHINFO_FILENAME)) . '.' . $extension;
+        $file->move(public_path('uploads/pods'), $filename);
 
-        // Validate filename format
-        if (!preg_match('/^POD_LR-[A-Za-z0-9\-]+\.(' . $extension . ')$/', $sanitizedName)) {
-            return back()->with('error', 'Invalid filename format. Use only letters, numbers, and hyphens. Underscores are not allowed.');
+        // Get current LR data and decode if necessary
+        $lrData = is_array($matchedOrder->lr) ? $matchedOrder->lr : json_decode($matchedOrder->lr, true);
+
+        // Safe checks
+        if (!isset($lrData[$matchedLRKey]) || !is_array($lrData[$matchedLRKey])) {
+            $lrData[$matchedLRKey] = [];
         }
 
-        $file->move(public_path('uploads'), $sanitizedName);
-        $lrData[$matchedLRKey]['pod_files'] = 'uploads/' . $sanitizedName;
+        if (!isset($lrData[$matchedLRKey]['pod_files']) || !is_array($lrData[$matchedLRKey]['pod_files'])) {
+            $lrData[$matchedLRKey]['pod_files'] = [];
+        }
 
-        $matchedOrder->lr = json_encode($lrData);
+        // ✅ Add file path to pod_files
+        $lrData[$matchedLRKey]['pod_files'][] = $relativePath;
+        $lrData[$matchedLRKey]['pod_uploaded'] = true;
+
+        // Save updated LR
+        $matchedOrder->lr = $lrData;
         $matchedOrder->save();
 
-        return back()->with('success', 'POD file uploaded successfully.');
+        return back()->with('success', 'POD uploaded successfully.');
     }
 
     return back()->with('error', 'Invalid file.');
 }
-
-
 
 
 public function multiplePodForm()
@@ -499,7 +487,6 @@ public function multiplePodForm()
 
 public function uploadMultiplePod(Request $request)
 {
-    // Validate multiple files
     $request->validate([
         'pod_files.*' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
     ]);
@@ -511,7 +498,6 @@ public function uploadMultiplePod(Request $request)
     foreach ($request->file('pod_files') as $file) {
         $original = $file->getClientOriginalName();
 
-        // Validate filename format POD_LR-XXXXXXXX.pdf
         if (!preg_match('/^POD_(LR-[A-Za-z0-9\-]+)\.(pdf|jpg|jpeg|png)$/i', $original, $matches)) {
             $errors[] = "Invalid filename format: {$original}";
             continue;
@@ -522,18 +508,10 @@ public function uploadMultiplePod(Request $request)
         $matchedKey = null;
 
         foreach ($orders as $order) {
-            $lrData = $order->lr; // casted to array
-
-            if (!is_array($lrData)) continue;
+            $lrData = is_array($order->lr) ? $order->lr : json_decode($order->lr, true);
 
             foreach ($lrData as $key => $entry) {
-                if (isset($entry['lr_number']) && trim($entry['lr_number']) === trim($lrNumber)) {
-
-                    if (!empty($entry['pod_uploaded'])) {
-                        $errors[] = "POD already uploaded for LR: {$lrNumber}";
-                        continue 2;
-                    }
-
+                if (isset($entry['lr_number']) && strpos($entry['lr_number'], $lrNumber) === 0) {
                     $matchedOrder = $order;
                     $matchedKey = $key;
                     break 2;
@@ -548,35 +526,47 @@ public function uploadMultiplePod(Request $request)
 
         // Save file
         $extension = $file->extension();
-        $filename = "POD_{$lrNumber}_" . now()->format('YmdHis') . '_' . Str::random(4) . '.' . $extension;
+        $filename = "POD_{$lrNumber}_" . now()->format('YmdHis') . '_' . \Str::random(4) . '.' . $extension;
+        $relativePath = 'uploads/pods/' . $filename;
+
         $file->move(public_path('uploads/pods'), $filename);
 
-        // Update LR data in matched order
-        $lrData = $matchedOrder->lr;
+        // Decode before updating
+        $lrData = is_array($matchedOrder->lr) ? $matchedOrder->lr : json_decode($matchedOrder->lr, true);
 
         if (!isset($lrData[$matchedKey]['pod_files']) || !is_array($lrData[$matchedKey]['pod_files'])) {
             $lrData[$matchedKey]['pod_files'] = [];
         }
 
-        $lrData[$matchedKey]['pod_files'][] = $filename;
+        $lrData[$matchedKey]['pod_files'][] = $relativePath;
         $lrData[$matchedKey]['pod_uploaded'] = true;
 
-        $matchedOrder->lr = $lrData; // Cast handles array-to-JSON
+        // Encode before saving
+        $matchedOrder->lr = json_encode($lrData);
         $matchedOrder->save();
 
         $uploadedAny = true;
     }
 
-    // Final response
     if ($uploadedAny) {
         $message = "POD files uploaded successfully.";
         if (!empty($errors)) {
-            $message .= " Some issues: " . implode(' | ', $errors);
+            $message .= " Issues: " . implode(' | ', $errors);
         }
         return back()->with('success', $message);
     } else {
         return back()->with('error', implode(' | ', $errors));
     }
+}
+
+public function Invoice(){
+    
+    return view('admin.consignments.invoice');
+}
+
+public function InvoiceView(){
+    
+    return view('admin.consignments.invoice-view');
 }
 
 

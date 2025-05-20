@@ -81,16 +81,19 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
+                       <tr>
                             <td>{{ $lrEntries['lr_number'] ?? 'N/A' }}</td>
                             <td>
-                                @if (!empty($lrEntries['pod_files']))
-                                    <a href="{{ asset($lrEntries['pod_files']) }}" target="_blank">View POD</a>
+                                @if (!empty($lrEntries['pod_files']) && is_array($lrEntries['pod_files']))
+                                    @foreach ($lrEntries['pod_files'] as $podFile)
+                                        <a href="{{ asset($podFile) }}" target="_blank">View POD</a><br>
+                                    @endforeach
                                 @else
                                     No POD uploaded
                                 @endif
                             </td>
                         </tr>
+
                     </tbody>
                 </table>
             </div>

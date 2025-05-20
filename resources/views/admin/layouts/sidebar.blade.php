@@ -30,12 +30,15 @@
                             @if (hasAdminPermission('manage lr_consignment'))
                                 <li><a href="{{ route('admin.consignments.index') }}" data-key="t-lr">LR / Consignment Note</a></li>
                             @endif
-                            <li>
-                                <a href="{{ route('admin.consignments.multiplePodForm') }}">Multiple POD</a>
-                            </li>
                             @if (hasAdminPermission('manage freight_bill'))
                                 <li><a href="{{ route('admin.freight-bill.index') }}" data-key="t-freight-bill">Freight Bill</a></li>
                             @endif
+                            <li>
+                                <a href="{{ route('admin.consignments.multiplePodForm') }}">Multiple POD</a>
+                            </li>
+                            <li>
+                                <a href="{{ route('admin.consignments.invoice') }}">Tax Invoice</a>
+                            </li>
                         </ul>
                     </li>
                 @endif

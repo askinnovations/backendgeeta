@@ -222,10 +222,7 @@ class OrderController extends Controller implements HasMiddleware
     
     public function getRate(Request $request)
     {
-     
-       
-
-            $rate = Contract::where('user_id', $request->customer_id)
+     $rate = Contract::where('user_id', $request->customer_id)
                 ->where('type_id', $request->vehicle_type)
                 ->where('from_destination_id', $request->from_location)
                 ->where('to_destination_id', $request->to_location)

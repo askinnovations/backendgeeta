@@ -119,7 +119,7 @@
                <!-- Input field for By Order -->
                <div class="mb-3 d-none" id="orderAmountDiv">
                   <label class="form-label">💰 ORDER AMOUNT</label>
-                  <input type="number" name="byOrder" class="form-control" placeholder="Enter Amount"
+                  <input type="number" id="amountInput" name="byOrder" class="form-control" placeholder="Enter Amount"
                      oninput="showOrderAmountAlert(this.value)">
                </div>
                <!-- Input field for By Contract -->
@@ -1110,6 +1110,11 @@
       row.remove(); // Remove the row from the table
    }
 </script>
+<!-- Load jQuery first -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+
 <!-- DataTables CSS -->
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
 <!-- DataTables JS -->

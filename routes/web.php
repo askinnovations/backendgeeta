@@ -63,7 +63,6 @@ Route::prefix('admin')->group(function () {
         Route::get('/create', [UserController::class, 'create'])->name('admin.users.create');
         Route::post('/store', [UserController::class, 'store'])->name('admin.users.store');
         Route::get('/view/{id}', [UserController::class, 'show'])->name('admin.users.view');
-        // Route::get('/edit/{id}', [UserController::class, 'edit'])->name('admin.users.edit');
         Route::post('/update/{id}', [UserController::class, 'update'])->name('admin.users.update');
         Route::delete('/delete/{id}', [UserController::class, 'destroy'])->name('admin.users.delete');
     });
@@ -219,7 +218,9 @@ Route::prefix('admin')->group(function () {
         Route::post('/upload-pod', [ConsignmentNoteController::class, 'uploadPod'])->name('admin.consignments.uploadPod');
         Route::get('/multiple-pod', [ConsignmentNoteController::class, 'multiplePodForm'])->name('admin.consignments.multiplePodForm');
         Route::post('/multiple-pod-upload', [ConsignmentNoteController::class, 'uploadMultiplePod'])->name('admin.consignments.uploadMultiplePod');
-        
+        Route::get('/invoice', [ConsignmentNoteController::class, 'Invoice'])->name('admin.consignments.invoice');
+        Route::get('/invoice-view', [ConsignmentNoteController::class, 'InvoiceView'])->name('admin.consignments.invoice-view');
+
     });
 
     // Freight Bill Management

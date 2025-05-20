@@ -38,8 +38,9 @@ class UserController extends Controller implements HasMiddleware
         'name' => $request->name,
         'pan_number' => $request->pan_number,
         'tan_number' => $request->tan_number,
+        'deductor' => $request->deductor,
         'address' => json_encode($request->address), 
-        // 'gst_number' => json_encode($request->gst_numbers),
+        
     ]);
 
     return redirect()->route('admin.users.index')->with('success', 'User added successfully without validation.');
@@ -61,6 +62,7 @@ class UserController extends Controller implements HasMiddleware
       $user->name = $request->name;
       $user->pan_number = $request->pan_number;
       $user->tan_number = $request->tan_number;
+      $user->deductor = $request->deductor;
   
       // Process address input
       if ($request->filled('address')) {
@@ -99,13 +101,6 @@ class UserController extends Controller implements HasMiddleware
   
       return redirect()->route('admin.users.index')->with('success', 'User updated successfully.');
   }
-
-
-  
-
-
-  
-  
 
 
 public function destroy($id)
